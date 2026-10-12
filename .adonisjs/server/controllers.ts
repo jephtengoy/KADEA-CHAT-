@@ -6,5 +6,6 @@
 export const controllers = {
   EmailVerifications: () => import('#controllers/email_verifications_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
+  PasswordResets: () => import('#controllers/password_resets_controller'),
   Session: () => import('#controllers/session_controller'),
 }

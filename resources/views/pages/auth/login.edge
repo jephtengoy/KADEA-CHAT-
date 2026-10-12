@@ -1,5 +1,4 @@
 @layouts.auth()
-edge
   @if(flashMessages.has('error'))
     <p class="auth__error" role="alert">
       {{ flashMessages.get('error') }}
@@ -12,7 +11,6 @@ edge
     </p>
   @end
 
-
   <h1 class="auth__title">Welcome back</h1>
   <p class="auth__sub">Sign in to continue building.</p>
   @form({
@@ -22,6 +20,7 @@ edge
     'x-data': '{ submitting: false }',
     'x-on:submit': 'submitting = true',
   })
+
     @field.root({ name: 'email' })
       @!field.label({ text: 'Email' })
       @!input.control({
@@ -31,6 +30,7 @@ edge
       })
       @!field.error()
     @end
+
     @field.root({ name: 'password' })
       @!field.label({ text: 'Password' })
       @!input.control({
@@ -40,6 +40,13 @@ edge
       })
       @!field.error()
     @end
+
+    <p class="auth__foot">
+      @link({ route: 'password_resets.create', class: 'il' })
+        Mot de passe oublié ?
+      @end
+    </p>
+
     @!button({
       text: 'Sign in',
       type: 'submit',
@@ -60,33 +67,4 @@ edge
       Create an account
     @end
   </p>
-  ```edge
-  <div class="auth__resend">
-    <p>Tu n’as pas reçu l’e-mail de confirmation ?</p>
-
-    @form({
-      route: 'email_verifications.resend',
-      method: 'POST',
-      class: 'auth__form'
-    })
-      @field.root({ name: 'email' })
-        @!field.label({ text: 'Ton adresse e-mail' })
-        @!input.control({
-          type: 'email',
-          autocomplete: 'email',
-          placeholder: 'you@example.com',
-          required: true,
-        })
-        @!field.error()
-      @end
-
-      @!button({
-        text: 'Renvoyer l’e-mail',
-        type: 'submit',
-        block: true,
-      })
-    @end
-  </div>
-```
-
 @end
