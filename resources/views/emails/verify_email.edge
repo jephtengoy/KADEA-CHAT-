@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirme ton adresse e-mail</title>
+</head>
+<body>
+  <h1>Bienvenue sur Kadea Chat 👋</h1>
+
+  <p>Bonjour {{ user.fullName || 'utilisateur' }},</p>
+
+  <p>
+    Merci d'avoir créé ton compte Kadea Chat.
+    Pour commencer à utiliser ton compte, confirme ton adresse e-mail.
+  </p>
+
+  <p>
+    <a href="{{ verificationUrl }}">
+      Confirmer mon adresse e-mail
+    </a>
+  </p>
+
+  <p>
+    Si tu n'es pas à l'origine de cette inscription, tu peux simplement ignorer cet e-mail.
+  </p>
+
+  <p>
+    À bientôt sur Kadea Chat 💬
+  </p>
+</body>
+</html>

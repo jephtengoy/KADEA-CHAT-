@@ -1,4 +1,15 @@
 @layouts.auth()
+  @if(flashMessages.has('error'))
+    <p class="auth__error" role="alert">
+      {{ flashMessages.get('error') }}
+    </p>
+  @end
+
+  @if(flashMessages.has('success'))
+    <p class="auth__success" role="status">
+      {{ flashMessages.get('success') }}
+    </p>
+  @end
   <h1 class="auth__title">Create your account</h1>
   <p class="auth__sub">Start building with the starter kit.</p>
   @form({

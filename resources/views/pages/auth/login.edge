@@ -1,4 +1,18 @@
 @layouts.auth()
+edge
+  @if(flashMessages.has('error'))
+    <p class="auth__error" role="alert">
+      {{ flashMessages.get('error') }}
+    </p>
+  @end
+
+  @if(flashMessages.has('success'))
+    <p class="auth__success" role="status">
+      {{ flashMessages.get('success') }}
+    </p>
+  @end
+
+
   <h1 class="auth__title">Welcome back</h1>
   <p class="auth__sub">Sign in to continue building.</p>
   @form({
@@ -46,4 +60,33 @@
       Create an account
     @end
   </p>
+  ```edge
+  <div class="auth__resend">
+    <p>Tu n’as pas reçu l’e-mail de confirmation ?</p>
+
+    @form({
+      route: 'email_verifications.resend',
+      method: 'POST',
+      class: 'auth__form'
+    })
+      @field.root({ name: 'email' })
+        @!field.label({ text: 'Ton adresse e-mail' })
+        @!input.control({
+          type: 'email',
+          autocomplete: 'email',
+          placeholder: 'you@example.com',
+          required: true,
+        })
+        @!field.error()
+      @end
+
+      @!button({
+        text: 'Renvoyer l’e-mail',
+        type: 'submit',
+        block: true,
+      })
+    @end
+  </div>
+```
+
 @end
