@@ -24,3 +24,7 @@ export const loginValidator = vine.create({
   email: email(),
   password: vine.string(),
 })
+
+export const profileValidator = vine.create({
+  fullName: vine.string().trim().maxLength(120),
+})

@@ -7,6 +7,38 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class ConversationMemberSchema extends BaseModel {
+  static $columns = ['conversationId', 'createdAt', 'id', 'role', 'updatedAt', 'userId'] as const
+  $columns = ConversationMemberSchema.$columns
+  @column()
+  declare conversationId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare role: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+  @column()
+  declare userId: number
+}
+
+export class ConversationSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'updatedAt', 'userOneId', 'userTwoId'] as const
+  $columns = ConversationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+  @column()
+  declare userOneId: number
+  @column()
+  declare userTwoId: number
+}
+
 export class EmailVerificationTokenSchema extends BaseModel {
   static $columns = ['createdAt', 'expiresAt', 'id', 'token', 'updatedAt', 'userId'] as const
   $columns = EmailVerificationTokenSchema.$columns
@@ -22,6 +54,25 @@ export class EmailVerificationTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
   @column()
   declare userId: number
+}
+
+export class MessageSchema extends BaseModel {
+  static $columns = ['body', 'conversationId', 'createdAt', 'id', 'readAt', 'senderId', 'updatedAt'] as const
+  $columns = MessageSchema.$columns
+  @column()
+  declare body: string
+  @column()
+  declare conversationId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column.dateTime()
+  declare readAt: DateTime | null
+  @column()
+  declare senderId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 }
 
 export class PasswordResetTokenSchema extends BaseModel {

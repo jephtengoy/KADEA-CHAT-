@@ -1,12 +1,12 @@
-
 import { DateTime } from 'luxon'
 import { randomBytes } from 'node:crypto'
 import type { HttpContext } from '@adonisjs/core/http'
+import mail from '@adonisjs/mail/services/main'
+import vine from '@vinejs/vine'
+import env from '#start/env'
 import User from '#models/user'
 import PasswordResetToken from '#models/password_reset_token'
-import mail from '@adonisjs/mail/services/main'
-import hash from '@adonisjs/core/services/hash'
-import vine from '@vinejs/vine'
+import ResetPasswordNotification from '#mails/reset_password_notification'
 
 const resetPasswordValidator = vine.compile(
   vine.object({
@@ -48,19 +48,9 @@ export default class PasswordResetsController {
       expiresAt: DateTime.now().plus({ hours: 1 }),
     })
 
-    const resetUrl = `${request.protocol()}://${request.host()}/reset-password/${token}`
+    const resetUrl = `${env.get('APP_URL')}/reset-password/${token}`
 
-    await mail.send((message) => {
-      message
-        .to(user.email)
-        .subject('Réinitialisation du mot de passe — Kadea Chat')
-        .html(`
-          <h1>Réinitialiser ton mot de passe</h1>
-          <p>Tu as demandé à modifier ton mot de passe Kadea Chat.</p>
-          <p><a href="${resetUrl}">Choisir un nouveau mot de passe</a></p>
-          <p>Ce lien expire dans une heure. Si tu n'es pas à l'origine de cette demande, ignore cet e-mail.</p>
-        `)
-    })
+    await mail.send(new ResetPasswordNotification(user, resetUrl))
 
     session.flash(
       'success',
@@ -78,18 +68,14 @@ export default class PasswordResetsController {
         await resetToken.delete()
       }
 
-      return response.badRequest(
-        'Ce lien de réinitialisation est invalide ou expiré.'
-      )
+      return response.badRequest('Ce lien de réinitialisation est invalide ou expiré.')
     }
 
     return view.render('pages/auth/reset_password', { token: params.token })
   }
 
   async update({ request, response, session }: HttpContext) {
-    const { token, password } = await request.validateUsing(
-      resetPasswordValidator
-    )
+    const { token, password } = await request.validateUsing(resetPasswordValidator)
 
     const resetToken = await PasswordResetToken.findBy('token', token)
 
@@ -98,27 +84,20 @@ export default class PasswordResetsController {
         await resetToken.delete()
       }
 
-      session.flash(
-        'error',
-        'Ce lien est invalide ou a expiré. Demande-en un nouveau.'
-      )
+      session.flash('error', 'Ce lien est invalide ou a expiré. Demande-en un nouveau.')
 
-      return response.redirect().toPath('/forgot-password')
+      return response.redirect().toRoute('password_resets.create')
     }
 
     const user = await User.findOrFail(resetToken.userId)
 
-    user.password = await hash.make(password)
+    user.password = password
     await user.save()
 
     await PasswordResetToken.query().where('userId', user.id).delete()
 
-    session.flash(
-      'success',
-      'Ton mot de passe a été modifié. Tu peux te connecter.'
-    )
+    session.flash('success', 'Ton mot de passe a été modifié. Tu peux te connecter.')
 
     return response.redirect().toRoute('session.create')
   }
 }
-

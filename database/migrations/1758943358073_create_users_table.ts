@@ -1,29 +1,22 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'email_verification_tokens'
+  protected tableName = 'users'
 
   async up() {
-    this.schema.alterTable(this.tableName, (table) => {
-      table
-        .integer('user_id')
-        .unsigned()
-        .notNullable()
-        .references('id')
-        .inTable('users')
-        .onDelete('CASCADE')
-
-      table.string('token', 128).notNullable().unique()
-      table.timestamp('expires_at').notNullable()
+    this.schema.createTable(this.tableName, (table) => {
+      table.increments('id').notNullable()
+      table.string('full_name').nullable()
+      table.string('email', 254).notNullable().unique()
+      table.string('password').notNullable()
+      table.string('avatar').nullable()
+      table.timestamp('email_verified_at').nullable()
+      table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').nullable()
     })
   }
 
   async down() {
-    this.schema.alterTable(this.tableName, (table) => {
-      table.dropForeign(['user_id'])
-      table.dropColumn('user_id')
-      table.dropColumn('token')
-      table.dropColumn('expires_at')
-    })
+    this.schema.dropTable(this.tableName)
   }
 }

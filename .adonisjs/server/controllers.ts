@@ -4,8 +4,12 @@
  */
 
 export const controllers = {
+  Attachments: () => import('#controllers/attachments_controller'),
+  Conversations: () => import('#controllers/conversations_controller'),
   EmailVerifications: () => import('#controllers/email_verifications_controller'),
+  Messages: () => import('#controllers/messages_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   PasswordResets: () => import('#controllers/password_resets_controller'),
+  Profile: () => import('#controllers/profile_controller'),
   Session: () => import('#controllers/session_controller'),
 }

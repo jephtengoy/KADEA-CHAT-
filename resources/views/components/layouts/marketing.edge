@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html
-  lang="en-us"
+  lang="fr"
   data-theme="{{
     request.plainCookie('app_theme', {
       defaultValue: 'light',
@@ -11,26 +11,29 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AdonisJS — Starter Kit</title>
+    <title>Kadea Chat — Messagerie privée</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('dumper')
   </head>
   <body>
     <header class="header header--floating">
       <div class="header__inner">
-        @!logo({ size: 28 })
+        <a href="{{ route('home') }}" class="landing__brand" aria-label="Kadea Chat, accueil">
+          <span class="landing__brand-mark">K</span>
+          <span>Kadea Chat</span>
+        </a>
         <div class="header__right">
           @!themeToggle()
           @if(auth.user)
             @link({ route: 'dashboard', class: 'btn btn--primary btn--sm' })
-              Dashboard
+              Mes discussions
             @end
           @else
             @link({ route: 'session.create', class: 'btn btn--ghost btn--sm' })
-              Sign in
+              Se connecter
             @end
             @link({ route: 'new_account.create', class: 'btn btn--primary btn--sm' })
-              Get started
+              Créer un compte
             @end
           @end
         </div>

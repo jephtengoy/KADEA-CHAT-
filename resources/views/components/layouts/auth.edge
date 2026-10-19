@@ -1,233 +1,271 @@
-
 <!DOCTYPE html>
-<html lang="fr" data-theme="{{
-  request.plainCookie('app_theme', {
-    defaultValue: 'light',
-    encoded: false,
-  })
-}}">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#17102f" />
-  <title>Kadea Chat — Connexion</title>
+<html
+  lang="fr"
+  data-theme="{{
+    request.plainCookie('app_theme', {
+      defaultValue: 'light',
+      encoded: false,
+    })
+  }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#17102f" />
+    <title>Kadea Chat — Connexion</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('dumper')
 
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @stack('dumper')
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
 
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-    }
-
-    .kadea-auth {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #110c22;
-      color: #fff;
-      font-family: Inter, Arial, sans-serif;
-    }
-
-    .kadea-auth__left {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 48px 24px;
-      background: #17102f;
-    }
-
-    .kadea-auth__brand {
-      width: 100%;
-      max-width: 410px;
-      margin-bottom: 42px;
-    }
-
-    .kadea-auth__brand-name {
-      margin-left: 10px;
-      font-size: 23px;
-      font-weight: 750;
-      letter-spacing: -0.7px;
-      vertical-align: middle;
-    }
-
-    .kadea-auth__form {
-      width: 100%;
-      max-width: 410px;
-    }
-
-    .kadea-auth__right {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 36px;
-      background: #211638;
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .kadea-auth__tag {
-      align-self: flex-end;
-      padding: 9px 15px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      color: #eee5ff;
-      font-size: 13px;
-    }
-
-    .kadea-auth__hero {
-      max-width: 500px;
-      margin: auto;
-    }
-
-    .kadea-auth__orb {
-      display: grid;
-      place-items: center;
-      width: 112px;
-      height: 112px;
-      margin-bottom: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 32px;
-      background: #302447;
-      box-shadow: none;
-      font-size: 52px;
-    }
-
-    .kadea-auth__headline {
-      margin: 0 0 18px;
-      font-size: clamp(32px, 4vw, 54px);
-      line-height: 1.12;
-      letter-spacing: -1.8px;
-      color: #fff;
-    }
-
-    .kadea-auth__headline span {
-      color: #c5a6ff;
-    }
-
-    .kadea-auth__description {
-      max-width: 420px;
-      color: #d1c5e7;
-      font-size: 16px;
-      line-height: 1.8;
-    }
-
-    .kadea-auth__footer {
-      color: #bdb0d3;
-      font-size: 13px;
-    }
-
-    /* Titres et textes de la connexion */
-    .kadea-auth__left .auth__title {
-      color: #fff;
-      font-size: 32px;
-      letter-spacing: -1px;
-    }
-
-    .kadea-auth__left .auth__sub {
-      color: #c8bddb;
-    }
-
-    .kadea-auth__left .auth__foot {
-      color: #d1c5e7;
-    }
-
-    .kadea-auth__left .il {
-      color: #c5a6ff;
-    }
-
-    /* Labels Email et Password en blanc */
-    .kadea-auth__left .field__label {
-      color: #ffffff;
-    }
-
-    /* Champs de saisie */
-    .kadea-auth__left .field__input {
-      color: #ffffff;
-      background: #211a32;
-      border-color: #514364;
-      border-radius: 12px;
-      caret-color: #ffffff;
-    }
-
-    .kadea-auth__left .field__input::placeholder {
-      color: #c8bddb;
-      opacity: 1;
-    }
-
-    .kadea-auth__left .field__input:focus {
-      border-color: #c5a6ff;
-      outline-color: #c5a6ff;
-    }
-
-    /* Bouton de connexion */
-    .kadea-auth__left button[type="submit"] {
-      min-height: 46px;
-      border-radius: 12px;
-    }
-
-    /* Adaptation aux petits écrans */
-    @media (max-width: 800px) {
       .kadea-auth {
-        grid-template-columns: 1fr;
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: #110c22;
+        color: #fff;
+        font-family: Inter, Arial, sans-serif;
       }
 
       .kadea-auth__left {
-        min-height: 100vh;
-        padding: 32px 22px;
-        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 48px 24px;
+        background: #17102f;
       }
 
       .kadea-auth__brand {
-        margin-bottom: 34px;
+        width: 100%;
+        max-width: 410px;
+        margin-bottom: 42px;
+      }
+
+      .kadea-auth__brand-name {
+        margin-left: 10px;
+        font-size: 23px;
+        font-weight: 750;
+        letter-spacing: -0.7px;
+        vertical-align: middle;
+      }
+
+      .kadea-auth__brand-link {
+        display: inline-flex;
+        align-items: center;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .kadea-auth__brand-mark {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        background: linear-gradient(145deg, #9b7bf0, #6547bf);
+        box-shadow:
+          0 8px 24px rgba(117, 83, 208, 0.34),
+          inset 0 1px rgba(255, 255, 255, 0.3);
+      }
+
+      .kadea-auth__brand-mark svg {
+        color: #fff;
+        stroke-width: 2;
+      }
+
+      .kadea-auth__brand-link:focus-visible {
+        border-radius: 8px;
+        outline: 2px solid #c5a6ff;
+        outline-offset: 5px;
+      }
+
+      .kadea-auth__form {
+        width: 100%;
+        max-width: 410px;
       }
 
       .kadea-auth__right {
-        display: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 36px;
+        background: #211638;
+        border-left: 1px solid rgba(255, 255, 255, 0.08);
       }
-    }
-  </style>
-</head>
 
-<body>
-  <main class="kadea-auth">
-    <section class="kadea-auth__left">
-      <div class="kadea-auth__brand">
-        @!logo({ size: 32 })
-        <span class="kadea-auth__brand-name">Kadea Chat</span>
-      </div>
+      .kadea-auth__tag {
+        align-self: flex-end;
+        padding: 9px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        color: #eee5ff;
+        font-size: 13px;
+      }
 
-      <div class="kadea-auth__form">
-        {{{ await $slots.main() }}}
-      </div>
+      .kadea-auth__hero {
+        max-width: 500px;
+        margin: auto;
+      }
 
-      <div style="height: 20px;"></div>
-    </section>
+      .kadea-auth__orb {
+        display: grid;
+        place-items: center;
+        width: 112px;
+        height: 112px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 32px;
+        background: #302447;
+        box-shadow: none;
+        font-size: 52px;
+      }
 
-    <aside class="kadea-auth__right">
-      <div class="kadea-auth__tag">● Votre espace de discussion</div>
+      .kadea-auth__headline {
+        margin: 0 0 18px;
+        font-size: clamp(32px, 4vw, 54px);
+        line-height: 1.12;
+        letter-spacing: -1.8px;
+        color: #fff;
+      }
 
-      <div class="kadea-auth__hero">
-        <div class="kadea-auth__orb">💬</div>
+      .kadea-auth__headline span {
+        color: #c5a6ff;
+      }
 
-        <h2 class="kadea-auth__headline">
-          Restez proches,<br />
-          où que vous <span>soyez.</span>
-        </h2>
+      .kadea-auth__description {
+        max-width: 420px;
+        color: #d1c5e7;
+        font-size: 16px;
+        line-height: 1.8;
+      }
 
-        <p class="kadea-auth__description">
-          Bienvenue sur Kadea Chat. Connectez-vous pour retrouver
-          vos conversations et échanger avec votre communauté.
-        </p>
-      </div>
+      .kadea-auth__footer {
+        color: #bdb0d3;
+        font-size: 13px;
+      }
 
-      <p class="kadea-auth__footer">
-        Kadea Chat · Connectés les uns aux autres.
-      </p>
-    </aside>
-  </main>
+      /* Titres et textes de la connexion */
+      .kadea-auth__left .auth__title {
+        color: #fff;
+        font-size: 32px;
+        letter-spacing: -1px;
+      }
 
-  @include('partials/flash_alerts')
-</body>
+      .kadea-auth__left .auth__sub {
+        color: #c8bddb;
+      }
+
+      .kadea-auth__left .auth__foot {
+        color: #d1c5e7;
+      }
+
+      .kadea-auth__left .il {
+        color: #c5a6ff;
+      }
+
+      /* Labels Email et Password en blanc */
+      .kadea-auth__left .field__label {
+        color: #ffffff;
+      }
+
+      /* Champs de saisie */
+      .kadea-auth__left .field__input {
+        color: #ffffff;
+        background: #211a32;
+        border-color: #514364;
+        border-radius: 12px;
+        caret-color: #ffffff;
+      }
+
+      .kadea-auth__left .field__input::placeholder {
+        color: #c8bddb;
+        opacity: 1;
+      }
+
+      .kadea-auth__left .field__input:focus {
+        border-color: #c5a6ff;
+        outline-color: #c5a6ff;
+      }
+
+      /* Bouton de connexion */
+      .kadea-auth__left button[type='submit'] {
+        min-height: 46px;
+        border-radius: 12px;
+      }
+
+      /* Adaptation aux petits écrans */
+      @media (max-width: 800px) {
+        .kadea-auth {
+          grid-template-columns: 1fr;
+        }
+
+        .kadea-auth__left {
+          min-height: 100vh;
+          padding: 32px 22px;
+          box-sizing: border-box;
+        }
+
+        .kadea-auth__brand {
+          margin-bottom: 34px;
+        }
+
+        .kadea-auth__right {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="kadea-auth">
+      <section class="kadea-auth__left">
+        <div class="kadea-auth__brand">
+          <a
+            class="kadea-auth__brand-link"
+            href="{{ route('home') }}"
+            aria-label="Kadea Chat, accueil"
+          >
+            <span class="kadea-auth__brand-mark">
+              @svg('lucide:messages-square', { width: 25, height: 25 })
+            </span>
+            <span class="kadea-auth__brand-name">Kadea Chat</span>
+          </a>
+        </div>
+
+        <div class="kadea-auth__form">{{{ await $slots.main() }}}</div>
+
+        <div style="height: 20px;"></div>
+      </section>
+
+      <aside class="kadea-auth__right">
+        <div class="kadea-auth__tag">● Votre espace de discussion</div>
+
+        <div class="kadea-auth__hero">
+          <div class="kadea-auth__orb">💬</div>
+
+          <h2 class="kadea-auth__headline">
+            
+          Restez proches,
+            <br />
+            
+          où que vous
+            <span>soyez.</span>
+          </h2>
+
+          <p class="kadea-auth__description">
+            Bienvenue sur Kadea Chat. Connectez-vous pour retrouver vos conversations et échanger avec votre communauté.
+          </p>
+        </div>
+
+        <p class="kadea-auth__footer">Kadea Chat · Connectés les uns aux autres.</p>
+      </aside>
+    </main>
+    @include('partials/flash_alerts')
+  </body>
 </html>

@@ -1,15 +1,15 @@
 import { DateTime } from 'luxon'
 import { randomBytes } from 'node:crypto'
 import type { HttpContext } from '@adonisjs/core/http'
+import mail from '@adonisjs/mail/services/main'
+import env from '#start/env'
 import EmailVerificationToken from '#models/email_verification_token'
 import User from '#models/user'
 import VerifyEmailNotification from '#mails/verify_email_notification'
-import mail from '@adonisjs/mail/services/main'
 
 export default class EmailVerificationsController {
   async verify({ params, response, view }: HttpContext) {
-    const verificationToken = await EmailVerificationToken
-      .query()
+    const verificationToken = await EmailVerificationToken.query()
       .where('token', params.token)
       .preload('user')
       .first()
@@ -33,7 +33,7 @@ export default class EmailVerificationsController {
     return view.render('pages/auth/email_verified')
   }
 
-  async resend({ request, response }: HttpContext) {
+  async resend({ request, response, session }: HttpContext) {
     const email = request.input('email')
 
     const user = await User.findBy('email', email)
@@ -56,9 +56,11 @@ export default class EmailVerificationsController {
       expiresAt: DateTime.now().plus({ hours: 24 }),
     })
 
-    const verificationUrl = `${request.protocol()}://${request.host()}/verify-email/${token}`
+    const verificationUrl = `${env.get('APP_URL')}/verify-email/${token}`
 
-   await mail.send(new VerifyEmailNotification(user, verificationUrl))
+    await mail.send(new VerifyEmailNotification(user, verificationUrl))
+
+    session.flash('success', 'Un nouvel e-mail de confirmation a été envoyé via Gmail.')
 
     return response.redirect().toRoute('session.create')
   }

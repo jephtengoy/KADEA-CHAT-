@@ -1,0 +1,48 @@
+warning: in the working copy of '.env.example', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/.env.example b/.env.example[m
+[1mindex 602d2b0..1a89ed4 100644[m
+[1m--- a/.env.example[m
+[1m+++ b/.env.example[m
+[36m@@ -11,8 +11,22 @@[m [mAPP_URL=http://${HOST}:${PORT}[m
+ [m
+ # Session[m
+ SESSION_DRIVER=cookie[m
+[32m+[m
+[32m+[m[32m# Database[m
+[32m+[m[32mDB_HOST=localhost[m
+[32m+[m[32mDB_PORT=5432[m
+[32m+[m[32mDB_USER=postgres[m
+[32m+[m[32mDB_PASSWORD=[m
+[32m+[m[32mDB_DATABASE=kadea_chat[m
+[32m+[m
+[32m+[m[32m# Mail — Gmail SMTP[m
+[32m+[m[32m# 1. Active la validation en 2 étapes sur ton compte Google[m
+[32m+[m[32m# 2. Crée un « Mot de passe d'application » : https://myaccount.google.com/apppasswords[m
+[32m+[m[32m# 3. Mets ton e-mail Gmail + ce mot de passe ci-dessous[m
+ MAIL_MAILER=smtp[m
+[31m-MAIL_FROM_NAME=Your name[m
+[31m-MAIL_FROM_ADDRESS=app@yourdomain.com[m
+[31m-SMTP_HOST=localhost[m
+[31m-SMTP_PORT=1025[m
+\ No newline at end of file[m
+[32m+[m[32mMAIL_FROM_NAME=Kadea Chat[m
+[32m+[m[32mMAIL_FROM_ADDRESS=ton.email@gmail.com[m
+[32m+[m[32mSMTP_HOST=smtp.gmail.com[m
+[32m+[m[32mSMTP_PORT=587[m
+[32m+[m[32mSMTP_USERNAME=ton.email@gmail.com[m
+[32m+[m[32mSMTP_PASSWORD=xxxx xxxx xxxx xxxx[m
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex dd7579a..6affcf3 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -24,3 +24,9 @@[m [myarn-error.log[m
+ [m
+ # Platform specific[m
+ .DS_Store[m
+[32m+[m
+[32m+[m[32m# Uploaded chat attachments[m
+[32m+[m[32mstorage/uploads/messages/*[m
+[32m+[m[32m!storage/uploads/messages/.gitkeep[m
+[32m+[m[32mpublic/uploads/*[m
+[32m+[m[32m!public/uploads/.gitkeep[m

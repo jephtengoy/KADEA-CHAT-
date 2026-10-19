@@ -8,8 +8,8 @@
   class="iconbtn"
   data-initial-theme="{{ currentTheme }}"
   x-data="themeToggle"
-  x-bind:aria-label="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
-  x-bind:title="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+  x-bind:aria-label="theme === 'dark' ? 'Activer le thème clair' : 'Activer le thème sombre'"
+  x-bind:title="theme === 'dark' ? 'Activer le thème clair' : 'Activer le thème sombre'"
   x-on:click="toggle"
 >
   @svg('lucide:sun', {

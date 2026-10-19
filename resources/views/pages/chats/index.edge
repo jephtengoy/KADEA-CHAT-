@@ -1,0 +1,332 @@
+@layouts.chat({ title: title || 'Discussions' })
+  @let(boot = {
+    currentUserId: currentUser.id,
+    conversationId: activeConversation ? activeConversation.id : null,
+    initialMessages: messages,
+    sendUrl: activeConversation
+      ? route('messages.store', { conversationId: activeConversation.id })
+      : null,
+    typingUrl: activeConversation
+      ? route('messages.typing', { conversationId: activeConversation.id })
+      : null,
+  })
+
+  <script type="application/json" id="chat-boot">
+    {
+      {
+        {
+          JSON.stringify(boot);
+        }
+      }
+    }
+  </script>
+
+  <div class="wa" x-data="chatApp(JSON.parse(document.getElementById('chat-boot').textContent))">
+    <aside class="wa__sidebar {{ activeConversation ? 'wa__sidebar--hidden-mobile' : '' }}">
+      <header class="wa__side-head">
+        <div class="wa__brand">
+          <span class="wa__brand-mark">K</span>
+          <div>
+            <strong>Kadea Chat</strong>
+            <small>{{ currentUser.fullName || currentUser.email }}</small>
+          </div>
+        </div>
+        <div class="wa__side-actions">
+          <a
+            href="{{ route('profile.edit') }}"
+            class="wa__icon-btn"
+            title="Mon profil"
+            aria-label="Mon profil"
+          >
+            @svg('lucide:user-round', { width: 18, height: 18 })
+          </a>
+          <button
+            type="button"
+            class="wa__icon-btn"
+            title="Nouveau groupe"
+            @click="showGroupModal = true"
+          >
+            @svg('lucide:users', { width: 18, height: 18 })
+          </button>
+          @!themeToggle()
+          @form({ route: 'session.destroy', method: 'POST' })
+            <button type="submit" class="wa__icon-btn" title="Déconnexion">
+              @svg('lucide:log-out', { width: 18, height: 18 })
+            </button>
+          @end
+        </div>
+      </header>
+
+      <div class="wa__search">
+        <input type="search" placeholder="Rechercher" x-model="query" />
+      </div>
+
+      <div class="wa__section-label">Contacts</div>
+      <ul class="wa__list wa__list--compact">
+        @each(user in users)
+          <li
+            data-contact-name="{{ user.fullName || user.email }}"
+            x-show="matchContact($el.dataset.contactName)"
+          >
+            @form({
+              route: 'chats.start',
+              routeParams: { userId: user.id },
+              method: 'POST',
+              class: 'wa__contact-form',
+            })
+              <button type="submit" class="wa__row">
+                @if(user.avatar)
+                  <img
+                    src="{{ route('users.avatar', { id: user.id }) }}"
+                    alt=""
+                    class="wa__avatar wa__avatar--photo"
+                  />
+                @else
+                  <span class="wa__avatar">{{ user.initials }}</span>
+                @end
+
+                <span class="wa__row-body">
+                  <span class="wa__row-title">{{ user.fullName || user.email }}</span>
+                  <span class="wa__row-sub">{{ user.email }}</span>
+                </span>
+              </button>
+            @end
+          </li>
+        @end
+      </ul>
+
+      <div class="wa__section-label">Discussions</div>
+      <ul class="wa__list" id="conversation-list">
+        @each(item in conversations)
+          <li>
+            <a
+              href="{{ route('chats.show', { id: item.id }) }}"
+              class="wa__row {{
+                activeConversation && activeConversation.id === item.id
+                  ? 'wa__row--active'
+                  : ''
+              }}"
+              data-conversation-id="{{ item.id }}"
+            >
+              @if(item.type === 'private' && item.peer && item.peer.avatar)
+                <img
+                  src="{{ route('users.avatar', { id: item.peer.id }) }}"
+                  alt=""
+                  class="wa__avatar wa__avatar--photo"
+                />
+              @else
+                <span class="wa__avatar {{ item.type === 'group' ? 'wa__avatar--group' : '' }}">
+                  {{ item.initials }}
+                </span>
+              @end
+
+              <span class="wa__row-body">
+                <span class="wa__row-top">
+                  <span class="wa__row-title">
+                    @if(item.type === 'group')
+                      <span class="wa__group-tag">Groupe</span>
+                    @end
+                    {{ item.title }}
+                  </span>
+                  @if(item.lastMessage)
+                    <time class="wa__row-time">
+                      {{ item.lastMessage.createdAt.toFormat('HH:mm') }}
+                    </time>
+                  @end
+                </span>
+                <span class="wa__row-sub wa__preview" data-preview-for="{{ item.id }}">
+                  @if(item.lastMessage)
+                    @if(item.lastMessage.type === 'image')
+                      📷 Photo
+                    @elseif(item.lastMessage.type === 'audio')
+                      🎤 Message vocal
+                    @elseif(item.lastMessage.type === 'file')
+                      📎
+                      {{ item.lastMessage.attachmentName || 'Fichier' }}
+                    @else
+                      {{ item.lastMessage.body }}
+                    @end
+                  @else
+                    {{ item.subtitle || 'Nouvelle discussion' }}
+                  @end
+                </span>
+              </span>
+              @if(item.unreadCount > 0)
+                <span class="wa__badge" data-badge-for="{{ item.id }}">{{ item.unreadCount }}</span>
+              @end
+            </a>
+          </li>
+        @end
+        @if(conversations.length === 0)
+          <li class="wa__empty-hint">Choisis un contact ou crée un groupe.</li>
+        @end
+      </ul>
+    </aside>
+
+    <section class="wa__pane {{ !activeConversation ? 'wa__pane--empty-mobile' : '' }}">
+      @if(activeConversation)
+        <header class="wa__pane-head">
+          <a href="{{ route('chats.index') }}" class="wa__back" aria-label="Retour">
+            @svg('lucide:arrow-left', { width: 20, height: 20 })
+          </a>
+          @if(activeConversation.type === 'private' && peer && peer.avatar)
+            <img
+              src="{{ route('users.avatar', { id: peer.id }) }}"
+              alt=""
+              class="wa__avatar wa__avatar--photo"
+            />
+          @else
+            <span
+              class="wa__avatar {{ activeConversation.type === 'group' ? 'wa__avatar--group' : '' }}"
+            >
+              {{ initials }}
+            </span>
+          @end
+
+          <div class="wa__pane-meta">
+            <strong>{{ title }}</strong>
+            <small x-text="headerStatus">en ligne · temps réel</small>
+          </div>
+        </header>
+
+        <div class="wa__messages" x-ref="scroller">
+          <template x-for="msg in messages" :key="msg.id">
+            <div class="wa__bubble-row" :class="msg.mine ? 'wa__bubble-row--mine' : ''">
+              <div class="wa__bubble" :class="msg.mine ? 'wa__bubble--mine' : 'wa__bubble--theirs'">
+                <div class="wa__sender" x-show="!msg.mine" x-text="msg.senderName"></div>
+
+                <template x-if="msg.type === 'image' && msg.attachmentUrl">
+                  <a
+                    :href="msg.attachmentUrl"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="wa__media-link"
+                  >
+                    <img
+                      :src="msg.attachmentUrl"
+                      :alt="msg.attachmentName || 'Photo'"
+                      class="wa__image"
+                    />
+                  </a>
+                </template>
+
+                <template x-if="msg.type === 'audio' && msg.attachmentUrl">
+                  <audio class="wa__audio" controls :src="msg.attachmentUrl"></audio>
+                </template>
+
+                <template x-if="msg.type === 'file' && msg.attachmentUrl">
+                  <a class="wa__file" :href="msg.attachmentUrl" target="_blank" rel="noreferrer">
+                    <span class="wa__file-icon">📎</span>
+                    <span>
+                      <strong x-text="msg.attachmentName || 'Fichier'"></strong>
+                      <small x-text="formatSize(msg.attachmentSize)"></small>
+                    </span>
+                  </a>
+                </template>
+
+                <p x-show="msg.body" x-text="msg.body"></p>
+                <time x-text="formatTime(msg.createdAt)"></time>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="wa__typing" x-show="typingText" x-text="typingText" x-cloak></div>
+
+        <form class="wa__composer" @submit.prevent="sendMessage">
+          <label class="wa__icon-btn" title="Photo ou fichier">
+            @svg('lucide:paperclip', { width: 18, height: 18 })
+            <input
+              type="file"
+              class="wa__file-input"
+              @change="onFileSelected($event)"
+              accept="image/*,audio/*,.pdf,.doc,.docx,.txt,.zip"
+            />
+          </label>
+
+          <button
+            type="button"
+            class="wa__icon-btn"
+            :class="recording ? 'wa__icon-btn--danger' : ''"
+            :title="recording ? 'Stop vocal' : 'Message vocal'"
+            @click="toggleRecording()"
+          >
+            <span x-show="!recording">
+              @svg('lucide:mic', { width: 18, height: 18 })
+            </span>
+            <span x-show="recording" x-text="recordSeconds + 's'"></span>
+          </button>
+
+          <input
+            type="text"
+            x-model="draft"
+            @input="onDraftInput"
+            placeholder="Écrire un message"
+            autocomplete="off"
+            maxlength="4000"
+          />
+          <button
+            type="submit"
+            class="wa__send"
+            :disabled="(!draft.trim() && !recording) || sending"
+          >
+            @svg('lucide:send', { width: 18, height: 18 })
+          </button>
+        </form>
+      @else
+        <div class="wa__welcome">
+          <div class="wa__welcome-card">
+            <div class="wa__welcome-icon">
+              @svg('lucide:messages-square', { width: 36, height: 36 })
+            </div>
+            <h1>Kadea Chat</h1>
+            <p>Messages privés, groupes, photos, fichiers et vocaux en temps réel.</p>
+            <p>Aucun message</p>
+          </div>
+        </div>
+      @end
+    </section>
+    {{-- Modal groupe --}}
+    <div
+      class="wa__modal"
+      x-show="showGroupModal"
+      x-cloak
+      @keydown.escape.window="showGroupModal = false"
+    >
+      <div class="wa__modal-backdrop" @click="showGroupModal = false"></div>
+      <div class="wa__modal-card">
+        <header>
+          <h2>Nouveau groupe</h2>
+          <button type="button" class="wa__icon-btn" @click="showGroupModal = false">✕</button>
+        </header>
+        @form({ route: 'chats.groups.store', method: 'POST', class: 'wa__group-form' })
+          <label class="field">
+            <span class="field__label">Nom du groupe</span>
+            <input
+              class="field__input"
+              type="text"
+              name="name"
+              required
+              minlength="2"
+              maxlength="120"
+              placeholder="Ex. Promo Kadea"
+            />
+          </label>
+          <p class="wa__modal-hint">Choisis les membres</p>
+          <ul class="wa__group-members">
+            @each(user in users)
+              <li>
+                <label>
+                  <input type="checkbox" name="memberIds[]" value="{{ user.id }}" />
+                  <span class="wa__avatar wa__avatar--sm">{{ user.initials }}</span>
+                  <span>{{ user.fullName || user.email }}</span>
+                </label>
+              </li>
+            @end
+          </ul>
+          <button type="submit" class="btn btn--primary btn--block">Créer le groupe</button>
+        @end
+      </div>
+    </div>
+  </div>
+@end

@@ -1,0 +1,56 @@
+@layouts.chat({ title: 'Mon profil' })
+  <main class="wa__profile-page">
+    <header class="wa__profile-header">
+      <a href="{{ route('chats.index') }}" class="wa__back" aria-label="Retour aux discussions">
+        @svg('lucide:arrow-left', { width: 20, height: 20 })
+      </a>
+      <h1>Mon profil</h1>
+    </header>
+
+    <section class="wa__profile-card">
+      <div class="wa__profile-avatar">
+        @if(currentUser.avatar)
+          <img
+            src="{{ route('users.avatar', { id: currentUser.id }) }}"
+            alt="Photo de profil de {{ currentUser.fullName || currentUser.email }}"
+            class="wa__avatar wa__avatar--photo wa__avatar--profile"
+          />
+        @else
+          <span class="wa__avatar wa__avatar--profile">{{ currentUser.initials }}</span>
+        @end
+      </div>
+
+      <h2>{{ currentUser.fullName || currentUser.email }}</h2>
+      <p class="wa__profile-email">{{ currentUser.email }}</p>
+      @form({
+        route: 'profile.update',
+        method: 'POST',
+        enctype: 'multipart/form-data',
+        class: 'wa__profile-form',
+      })
+        <label class="wa__profile-field">
+          <span>Nom complet</span>
+          <input
+            type="text"
+            name="fullName"
+            value="{{ currentUser.fullName || '' }}"
+            maxlength="120"
+          />
+        </label>
+
+        <label class="wa__profile-field">
+          <span>Adresse e-mail</span>
+          <input type="email" value="{{ currentUser.email }}" readonly />
+        </label>
+
+        <label class="wa__profile-field">
+          <span>Photo de profil</span>
+          <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" />
+          <small>JPG, PNG ou WebP, 5 Mo maximum.</small>
+        </label>
+
+        <button type="submit" class="btn btn--primary">Enregistrer</button>
+      @end
+    </section>
+  </main>
+@end
